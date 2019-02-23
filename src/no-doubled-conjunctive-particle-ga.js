@@ -5,6 +5,14 @@ import {getTokenizer} from "kuromojin";
 import splitSentences, {Syntax as SentenceSyntax} from "sentence-splitter";
 import StringSource from "textlint-util-to-string";
 
+const defaultOptions = {
+    separatorChars: ["。", "?", "!", "？", "！"]
+};
+// ref: https://stackoverflow.com/questions/2593637/how-to-escape-regular-expression-in-javascript
+RegExp.escape = function(str) {
+  return String(str).replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+};
+
 /*
     1. Paragraph Node -> text
     2. text -> sentences
@@ -14,6 +22,7 @@ import StringSource from "textlint-util-to-string";
     TODO: need abstraction
  */
 export default function (context, options = {}) {
+    const separatorChars = options.separatorChars || defaultOptions.separatorChars;
     const helper = new RuleHelper(context);
     const {Syntax, report, getSource, RuleError} = context;
     return {
@@ -26,8 +35,9 @@ export default function (context, options = {}) {
             const isSentenceNode = node => {
                 return node.type === SentenceSyntax.Sentence;
             };
+            const charRegExp = new RegExp("[" + RegExp.escape(separatorChars.join("")) + "]");
             let sentences = splitSentences(text, {
-                charRegExp: /[。\?\!？！]/
+                charRegExp: charRegExp
             }).filter(isSentenceNode);
             return getTokenizer().then(tokenizer => {
               const checkSentence = (sentence) => {
