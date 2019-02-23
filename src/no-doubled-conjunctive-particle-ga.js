@@ -61,7 +61,8 @@ export default function (context, options = {}) {
                   // this is padding column start with 0 (== -1)
                   column: originalPosition.column
                 };
-                report(node, new RuleError(`文中に逆接の接続助詞 "が" が二回以上使われています。`, padding));                  return current;
+                report(node, new RuleError(`文中に逆接の接続助詞 "が" が二回以上使われています。`, padding));
+                return current;
               }
               sentences.forEach(checkSentence);
             });
