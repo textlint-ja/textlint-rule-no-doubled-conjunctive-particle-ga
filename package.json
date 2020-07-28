@@ -40,10 +40,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/takahashim/textlint-rule-no-doubled-conjunctive-particle-ga.git"
+    "url": "https://github.com/textlint-ja/textlint-rule-no-doubled-conjunctive-particle-ga.git"
   },
   "bugs": {
-    "url": "https://github.com/takahashim/textlint-rule-no-doubled-conjunctive-particle-ga/issues"
+    "url": "https://github.com/textlint-ja/textlint-rule-no-doubled-conjunctive-particle-ga/issues"
   },
-  "homepage": "https://github.com/takahashim/textlint-rule-no-doubled-conjunctive-particle-ga"
+  "homepage": "https://github.com/textlint-ja/textlint-rule-no-doubled-conjunctive-particle-ga"
 }
