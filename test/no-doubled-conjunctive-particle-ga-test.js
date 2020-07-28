@@ -1,4 +1,3 @@
-import assert from "power-assert";
 import rule from "../src/no-doubled-conjunctive-particle-ga";
 import TextLintTester from "textlint-tester";
 var tester = new TextLintTester();
