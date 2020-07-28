@@ -8,28 +8,19 @@
     "test": "test"
   },
   "dependencies": {
-    "kuromojin": "^1.1.0",
+    "kuromojin": "^2.0.0",
     "sentence-splitter": "^1.2.0",
     "textlint-rule-helper": "^1.1.5",
     "textlint-util-to-string": "^1.2.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "@babel/register": "^7.0.0",
-    "babel-preset-power-assert": "^3.0.0",
-    "babel-register": "^6.26.0",
-    "mocha": "^6.0.1",
-    "power-assert": "^1.6.1",
-    "textlint": "^5.2.1",
-    "textlint-tester": "^0.4.1"
+    "textlint-scripts": "^3.0.0"
   },
   "scripts": {
-    "build": "babel src --out-dir lib --source-maps",
-    "watch": "babel src --out-dir lib --watch --source-maps",
+    "build": "textlint-scripts build",
+    "watch": "textlint-scripts build --watch",
     "prepublish": "npm run --if-present build",
-    "test": "mocha",
+    "test": "textlint-scripts test",
     "textlint": "textlint"
   },
   "keywords": [
