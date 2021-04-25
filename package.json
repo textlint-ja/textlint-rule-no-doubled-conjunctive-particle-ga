@@ -1,6 +1,6 @@
 {
   "name": "textlint-rule-no-doubled-conjunctive-particle-ga",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "textlint rule plugin to check duplicated conjunctive particle `ga` in a sentence.",
   "main": "lib/no-doubled-conjunctive-particle-ga.js",
   "files": [
