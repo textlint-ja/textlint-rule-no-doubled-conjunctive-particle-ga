@@ -16,10 +16,6 @@ Note: In generally, using same conjunctive particles is not an issue.  `ga` is s
 
     npm install textlint-rule-no-doubled-conjunctive-particle-ga
 
-### Require
-
-- textlint 5.0 >=
-
 ### Dependencies
 
 - [azu/kuromojin](https://github.com/azu/kuromojin): a wrapper of [kuromoji.js](https://github.com/takuyaa/kuromoji.js "kuromoji.js")

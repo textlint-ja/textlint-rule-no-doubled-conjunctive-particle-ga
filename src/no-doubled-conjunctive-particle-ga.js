@@ -1,18 +1,21 @@
 // LICENSE : MIT
 "use strict";
-import {RuleHelper} from "textlint-rule-helper";
-import {getTokenizer} from "kuromojin";
-import splitSentences, {Syntax as SentenceSyntax} from "sentence-splitter";
-import StringSource from "textlint-util-to-string";
+import { RuleHelper } from "textlint-rule-helper";
+import { getTokenizer } from "kuromojin";
+import { splitAST, Syntax as SentenceSyntax } from "sentence-splitter";
+import { StringSource } from "textlint-util-to-string";
 
 const defaultOptions = {
-    separatorChars: ["。", "?", "!", "？", "！"]
+    separatorChars: [
+        ".", // period
+        "．", // (ja) zenkaku-period
+        "。", // (ja) 句点
+        "?", // question mark
+        "!", //  exclamation mark
+        "？", // (ja) zenkaku question mark
+        "！" // (ja) zenkaku exclamation mark
+    ]
 };
-// ref: https://stackoverflow.com/questions/2593637/how-to-escape-regular-expression-in-javascript
-RegExp.escape = function(str) {
-  return String(str).replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
-};
-
 /*
     1. Paragraph Node -> text
     2. text -> sentences
@@ -22,49 +25,45 @@ RegExp.escape = function(str) {
     TODO: need abstraction
  */
 export default function (context, options = {}) {
-    const separatorChars = options.separatorChars || defaultOptions.separatorChars;
+    const separatorChars = options.separatorChars ?? defaultOptions.separatorChars;
     const helper = new RuleHelper(context);
-    const {Syntax, report, getSource, RuleError} = context;
+    const { Syntax, report, getSource, RuleError } = context;
     return {
-        [Syntax.Paragraph](node){
+        [Syntax.Paragraph](node) {
             if (helper.isChildNode(node, [Syntax.Link, Syntax.Image, Syntax.BlockQuote, Syntax.Emphasis])) {
                 return;
             }
-            const source = new StringSource(node);
-            const text = source.toString();
             const isSentenceNode = node => {
                 return node.type === SentenceSyntax.Sentence;
             };
-            const charRegExp = new RegExp("[" + RegExp.escape(separatorChars.join("")) + "]");
-            let sentences = splitSentences(text, {
-                charRegExp: charRegExp
-            }).filter(isSentenceNode);
-            return getTokenizer().then(tokenizer => {
-              const checkSentence = (sentence) => {
-                let tokens = tokenizer.tokenizeForSentence(sentence.raw);
-                const isConjunctiveParticleGaToken = token => {
-                  return token.pos_detail_1 === "接続助詞" && token.surface_form === "が";
-                };
-                let conjunctiveParticleGaTokens = tokens.filter(isConjunctiveParticleGaToken);
-                if (conjunctiveParticleGaTokens.length <= 1) {
-                  return;
+            const sentences = splitAST(node, {
+                SeparatorParser: {
+                    separatorCharacters: separatorChars
                 }
-                let current = conjunctiveParticleGaTokens[0];
-                let originalPosition = source.originalPositionFor({
-                  line: sentence.loc.start.line,
-                  column: sentence.loc.start.column + (current.word_position - 1)
-                });
-                // padding position
-                var padding = {
-                  line: originalPosition.line - 1,
-                  // matchLastToken.word_position start with 1
-                  // this is padding column start with 0 (== -1)
-                  column: originalPosition.column
-                };
-                report(node, new RuleError(`文中に逆接の接続助詞 "が" が二回以上使われています。`, padding));
-                return current;
-              }
-              sentences.forEach(checkSentence);
+            }).children.filter(isSentenceNode);
+            return getTokenizer().then(tokenizer => {
+                const checkSentence = (sentence) => {
+                    const source = new StringSource(sentence);
+                    const sentenceText = source.toString();
+                    const tokens = tokenizer.tokenizeForSentence(sentenceText);
+                    const isConjunctiveParticleGaToken = token => {
+                        return token.pos_detail_1 === "接続助詞" && token.surface_form === "が";
+                    };
+                    const conjunctiveParticleGaTokens = tokens.filter(isConjunctiveParticleGaToken);
+                    if (conjunctiveParticleGaTokens.length <= 1) {
+                        return;
+                    }
+                    const current = conjunctiveParticleGaTokens[0];
+                    const originalIndex = source.originalIndexFromPosition({
+                        line: sentence.loc.start.line,
+                        column: sentence.loc.start.column + (current.word_position - 1)
+                    });
+                    report(node, new RuleError(`文中に逆接の接続助詞 "が" が二回以上使われています。`, {
+                        index: originalIndex
+                    }));
+                    return current;
+                }
+                sentences.forEach(checkSentence);
             });
         }
     }
