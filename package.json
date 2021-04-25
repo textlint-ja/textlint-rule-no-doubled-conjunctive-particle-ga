@@ -3,10 +3,10 @@
   "version": "2.0.0",
   "description": "textlint rule plugin to check duplicated conjunctive particle `ga` in a sentence.",
   "main": "lib/no-doubled-conjunctive-particle-ga.js",
-  "directories": {
-    "example": "example",
-    "test": "test"
-  },
+  "files": [
+    "lib/",
+    "src/"
+  ],
   "dependencies": {
     "kuromojin": "^3.0.0",
     "sentence-splitter": "^3.2.1",
