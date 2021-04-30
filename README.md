@@ -4,13 +4,17 @@ This module is a textlint plugin to check duplicated conjunctive particle `ga(�
 
 逆接の接続助詞「が」は、特に否定の意味ではなくても安易に使われてしまいがちです。これが同一文中に複数回出現していないかどうかをチェックするための[textlint](https://github.com/textlint/textlint "textlint")ルールです。
 
-ex)
+例
 
-> 今日は早朝から出発したが、定刻には間に合わなかったが、無事会場に到着した。
+> 今日は早朝から出発した**が**、定刻には間に合わなかった**が**、無事会場に到着した。
 
-"出発した**が**" and "間に合わなかった**が**" are conjunctive particles.
+"出発した**が**" と "間に合わなかった**が**" が 同じ接続助詞の「が」が連続しています。
 
-Note: In generally, using same conjunctive particles is not an issue.  `ga` is special case.
+> キーワードが多く抽出された**が**、クラスタの数が10ということもある**が**、逆に欠点となるようなキーワードが表示されなかった。
+
+"抽出された**が**" と "こともある**が**" が 同じ接続助詞の「が」が連続しています。
+
+Note: In generally, using same conjunctive particles is not an issue. `ga` is special case.
 
 ## Installation
 
