@@ -35,6 +35,16 @@ tester.run("no-doubled-conjunctive-particle-ga", rule, {
                 }
             ]
         },
+        {
+            // https://ipsj.ixsq.nii.ac.jp/ej/index.php?action=pages_view_main&active_action=repository_action_common_download&item_id=108359&item_no=1&attribute_id=1&file_no=1&page_id=13&block_id=8 から引用
+            text: "キーワードが多く抽出されたが、クラスタの数が10ということもあるが、逆に欠点となるようなキーワードが表示されなかった。",
+            errors: [
+                {
+                    message: `文中に逆接の接続助詞 "が" が二回以上使われています。`,
+                    index: 13
+                }
+            ]
+        },
         // option test
         {
             text: "今日は早朝から出発したが，定刻には間に合わなかった．間に合わなかったが，無事会場に到着した．",
