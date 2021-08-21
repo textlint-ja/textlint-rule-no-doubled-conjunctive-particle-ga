@@ -41,10 +41,10 @@ export default function (context, options = {}) {
                     separatorCharacters: separatorChars
                 }
             }).children.filter(isSentenceNode);
+            const source = new StringSource(node);
             return getTokenizer().then(tokenizer => {
                 const checkSentence = (sentence) => {
-                    const source = new StringSource(sentence);
-                    const sentenceText = source.toString();
+                    const sentenceText = getSource(sentence);
                     const tokens = tokenizer.tokenizeForSentence(sentenceText);
                     const isConjunctiveParticleGaToken = token => {
                         return token.pos_detail_1 === "接続助詞" && token.surface_form === "が";
@@ -54,12 +54,10 @@ export default function (context, options = {}) {
                         return;
                     }
                     const current = conjunctiveParticleGaTokens[0];
-                    const originalIndex = source.originalIndexFromPosition({
-                        line: sentence.loc.start.line,
-                        column: sentence.loc.start.column + (current.word_position - 1)
-                    });
+                    const sentenceIndex = source.originalIndexFromPosition(sentence.loc.start);
+                    const currentIndex = sentenceIndex + (current.word_position - 1);
                     report(node, new RuleError(`文中に逆接の接続助詞 "が" が二回以上使われています。`, {
-                        index: originalIndex
+                        index: currentIndex
                     }));
                     return current;
                 }
