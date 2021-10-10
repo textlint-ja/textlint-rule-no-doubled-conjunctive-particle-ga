@@ -54,8 +54,8 @@ export default function (context, options = {}) {
                         return;
                     }
                     const current = conjunctiveParticleGaTokens[0];
-                    const sentenceIndex = source.originalIndexFromPosition(sentence.loc.start);
-                    const currentIndex = (sentenceIndex || 0) + (current.word_position - 1);
+                    const sentenceIndex = source.originalIndexFromPosition(sentence.loc.start) || 0;
+                    const currentIndex = sentenceIndex + (current.word_position - 1);
                     report(node, new RuleError(`文中に逆接の接続助詞 "が" が二回以上使われています。`, {
                         index: currentIndex
                     }));
