@@ -42,25 +42,25 @@ export default function (context, options = {}) {
                 }
             }).children.filter(isSentenceNode);
             const source = new StringSource(node);
-            return sentences.forEach((sentence) => {
+            const checkSentence = async (sentence) => {
                 const sentenceText = getSource(sentence);
-                tokenize(sentenceText).then((tokens) => {
-                    const isConjunctiveParticleGaToken = token => {
-                        return token.pos_detail_1 === "接続助詞" && token.surface_form === "が";
-                    };
-                    const conjunctiveParticleGaTokens = tokens.filter(isConjunctiveParticleGaToken);
-                    if (conjunctiveParticleGaTokens.length <= 1) {
-                        return;
-                    }
-                    const current = conjunctiveParticleGaTokens[0];
-                    const sentenceIndex = source.originalIndexFromPosition(sentence.loc.start) || 0;
-                    const currentIndex = sentenceIndex + (current.word_position - 1);
-                    report(node, new RuleError(`文中に逆接の接続助詞 "が" が二回以上使われています。`, {
-                        index: currentIndex
-                    }));
-                    return current;
-                })
-            });
+                const tokens = await tokenize(sentenceText);
+                const isConjunctiveParticleGaToken = token => {
+                    return token.pos_detail_1 === "接続助詞" && token.surface_form === "が";
+                };
+                const conjunctiveParticleGaTokens = tokens.filter(isConjunctiveParticleGaToken);
+                if (conjunctiveParticleGaTokens.length <= 1) {
+                    return;
+                }
+                const current = conjunctiveParticleGaTokens[0];
+                const sentenceIndex = source.originalIndexFromPosition(sentence.loc.start) || 0;
+                const currentIndex = sentenceIndex + (current.word_position - 1);
+                report(node, new RuleError(`文中に逆接の接続助詞 "が" が二回以上使われています。`, {
+                    index: currentIndex
+                }));
+                return current;
+            };
+            return Promise.all(sentences.map(checkSentence));
         }
     }
 };
