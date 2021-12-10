@@ -1,7 +1,7 @@
 // LICENSE : MIT
 "use strict";
 import { RuleHelper } from "textlint-rule-helper";
-import { getTokenizer } from "kuromojin";
+import { tokenize } from "kuromojin";
 import { splitAST, Syntax as SentenceSyntax } from "sentence-splitter";
 import { StringSource } from "textlint-util-to-string";
 
@@ -42,10 +42,9 @@ export default function (context, options = {}) {
                 }
             }).children.filter(isSentenceNode);
             const source = new StringSource(node);
-            return getTokenizer().then(tokenizer => {
-                const checkSentence = (sentence) => {
-                    const sentenceText = getSource(sentence);
-                    const tokens = tokenizer.tokenizeForSentence(sentenceText);
+            return sentences.forEach((sentence) => {
+                const sentenceText = getSource(sentence);
+                tokenize(sentenceText).then((tokens) => {
                     const isConjunctiveParticleGaToken = token => {
                         return token.pos_detail_1 === "接続助詞" && token.surface_form === "が";
                     };
@@ -60,8 +59,7 @@ export default function (context, options = {}) {
                         index: currentIndex
                     }));
                     return current;
-                }
-                sentences.forEach(checkSentence);
+                })
             });
         }
     }
