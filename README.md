@@ -27,6 +27,18 @@ Note: In generally, using same conjunctive particles is not an issue. `ga` is sp
 
 ## Usage
 
+Via `.textlintrc`(Recommended)
+
+```json
+{
+  "rules": {
+    "no-doubled-conjunctive-particle-ga": true
+  }
+}
+```
+
+Via CLI
+
     textlint --rule no-doubled-conjunctive-particle-ga sample.md
 
 ### Options
