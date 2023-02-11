@@ -12,7 +12,11 @@ tester.run("no-doubled-conjunctive-particle-ga", rule, {
             options: {
                 separatorChars: ["。", "?", "!", "？", "！", "．"]
             }
-        }
+        },
+        // 括弧の中の区切り文字判定
+        // https://github.com/textlint-ja/textlint-rule-no-doubled-conjunctive-particle-ga/issues/19
+        "今日は早朝から出発したが、定刻には間に合わなかった。定刻には間に合わなかったが、無事会場に到着した",
+        "「今日は早朝から出発したが、定刻には間に合わなかった。定刻には間に合わなかったが、無事会場に到着した」"
     ],
     invalid: [
         {

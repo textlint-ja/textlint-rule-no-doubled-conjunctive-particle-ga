@@ -37,5 +37,6 @@
   "bugs": {
     "url": "https://github.com/textlint-ja/textlint-rule-no-doubled-conjunctive-particle-ga/issues"
   },
-  "homepage": "https://github.com/textlint-ja/textlint-rule-no-doubled-conjunctive-particle-ga"
+  "homepage": "https://github.com/textlint-ja/textlint-rule-no-doubled-conjunctive-particle-ga",
+  "packageManager": "npm@9.2.0"
 }
