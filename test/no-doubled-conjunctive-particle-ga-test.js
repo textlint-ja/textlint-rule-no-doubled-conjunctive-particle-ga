@@ -5,6 +5,7 @@ const tester = new TextLintTester();
 tester.run("no-doubled-conjunctive-particle-ga", rule, {
     valid: [
         "この関数がエラーになるのは、関数名が正しくないためです。",
+        "この関数がエラーになるのは、関数名が正しくないためです。",
         "この文章が問題となっています。",
         "今日は早朝から出発したが、定刻には間に合わなかった。が、無事会場に到着した。",
         {
