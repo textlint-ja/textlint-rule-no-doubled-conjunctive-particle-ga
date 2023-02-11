@@ -5,6 +5,31 @@ import { getTokenizer } from "kuromojin";
 import { splitAST, Syntax as SentenceSyntax } from "sentence-splitter";
 import { StringSource } from "textlint-util-to-string";
 
+
+/**
+ * tokensから、区切り文字で分割したtokensの配列を返す
+ * 結果は [[token, token], [token, token]] のような配列になる
+ * @param {*[]} tokens
+ * @param {string[]} separatorChars
+ * @returns {*[][]}
+ */
+const splitTokensBySeparatorChars = (tokens, separatorChars) => {
+    const results = [];
+    let current = [];
+    tokens.forEach(token => {
+        if (separatorChars.includes(token.surface_form)) {
+            results.push(current);
+            current = [];
+        } else {
+            current.push(token);
+        }
+    });
+    if (current.length > 0) {
+        results.push(current);
+    }
+    return results;
+}
+
 const defaultOptions = {
     separatorChars: [
         ".", // period
@@ -16,6 +41,7 @@ const defaultOptions = {
         "！" // (ja) zenkaku exclamation mark
     ]
 };
+
 /*
     1. Paragraph Node -> text
     2. text -> sentences
@@ -49,17 +75,21 @@ export default function (context, options = {}) {
                     const isConjunctiveParticleGaToken = token => {
                         return token.pos_detail_1 === "接続助詞" && token.surface_form === "が";
                     };
-                    const conjunctiveParticleGaTokens = tokens.filter(isConjunctiveParticleGaToken);
-                    if (conjunctiveParticleGaTokens.length <= 1) {
-                        return;
-                    }
-                    const current = conjunctiveParticleGaTokens[0];
-                    const sentenceIndex = source.originalIndexFromPosition(sentence.loc.start) || 0;
-                    const currentIndex = sentenceIndex + (current.word_position - 1);
-                    report(node, new RuleError(`文中に逆接の接続助詞 "が" が二回以上使われています。`, {
-                        index: currentIndex
-                    }));
-                    return current;
+                    // カッコの中はセンテンスとして分解されないため、
+                    // 区切り文字で分割したtokensの配列を取得
+                    const tokensBySentence = splitTokensBySeparatorChars(tokens, separatorChars);
+                    tokensBySentence.forEach(tokens => {
+                        const conjunctiveParticleGaTokens = tokens.filter(isConjunctiveParticleGaToken);
+                        if (conjunctiveParticleGaTokens.length <= 1) {
+                            return;
+                        }
+                        const current = conjunctiveParticleGaTokens[0];
+                        const sentenceIndex = source.originalIndexFromPosition(sentence.loc.start) || 0;
+                        const currentIndex = sentenceIndex + (current.word_position - 1);
+                        report(node, new RuleError(`文中に逆接の接続助詞 "が" が二回以上使われています。`, {
+                            index: currentIndex
+                        }));
+                    });
                 }
                 sentences.forEach(checkSentence);
             });
