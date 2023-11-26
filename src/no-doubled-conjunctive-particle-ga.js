@@ -2,7 +2,7 @@
 "use strict";
 import { RuleHelper } from "textlint-rule-helper";
 import { getTokenizer } from "kuromojin";
-import { splitAST, Syntax as SentenceSyntax } from "sentence-splitter";
+import { splitAST, SentenceSplitterSyntax as SentenceSyntax } from "sentence-splitter";
 import { StringSource } from "textlint-util-to-string";
 
 
@@ -50,10 +50,15 @@ const defaultOptions = {
 
     TODO: need abstraction
  */
+/**
+ * @param {import("@textlint/types").TextlintRuleContext} context
+ * @param {*} options
+ * @returns {import("@textlint/types").TextlintRuleReportHandler}
+ */
 export default function (context, options = {}) {
     const separatorChars = options.separatorChars ?? defaultOptions.separatorChars;
     const helper = new RuleHelper(context);
-    const { Syntax, report, getSource, RuleError } = context;
+    const { Syntax, report, getSource, RuleError, locator } = context;
     return {
         [Syntax.Paragraph](node) {
             if (helper.isChildNode(node, [Syntax.Link, Syntax.Image, Syntax.BlockQuote, Syntax.Emphasis])) {
@@ -87,7 +92,7 @@ export default function (context, options = {}) {
                         const sentenceIndex = source.originalIndexFromPosition(sentence.loc.start) || 0;
                         const currentIndex = sentenceIndex + (current.word_position - 1);
                         report(node, new RuleError(`文中に逆接の接続助詞 "が" が二回以上使われています。`, {
-                            index: currentIndex
+                            padding: locator.range([currentIndex, currentIndex + 1])
                         }));
                     });
                 }

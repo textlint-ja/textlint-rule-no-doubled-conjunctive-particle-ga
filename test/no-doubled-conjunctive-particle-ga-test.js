@@ -83,5 +83,15 @@ tester.run("no-doubled-conjunctive-particle-ga", rule, {
                 }
             ]
         },
+        // range
+        {
+            text: "\n今日は早朝から出発したが、定刻には間に合わなかったが、無事会場に到着した。",
+            errors: [
+                {
+                    message: `文中に逆接の接続助詞 "が" が二回以上使われています。`,
+                    range: [12, 13]
+                }
+            ]
+        },
     ]
 });
